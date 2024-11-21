@@ -1,0 +1,26 @@
+created:
+    - database/factories/KecamatanFactory.php
+    - database/factories/PasarFactory.php
+    - database/factories/SatuanFactory.php
+    - database/factories/JenisUttpFactory.php
+    - database/factories/WajibTeraPasarFactory.php
+    - database/factories/UttpWajibTeraPasarFactory.php
+    - database/migrations/2024_11_20_133454_create_kecamatans_table.php
+    - database/migrations/2024_11_20_133455_create_pasars_table.php
+    - database/migrations/2024_11_20_133456_create_satuans_table.php
+    - database/migrations/2024_11_20_133457_create_jenis_uttps_table.php
+    - database/migrations/2024_11_20_133458_create_wajib_tera_pasars_table.php
+    - database/migrations/2024_11_20_133459_create_uttp_wajib_tera_pasars_table.php
+    - app/Models/Kecamatan.php
+    - app/Models/Pasar.php
+    - app/Models/Satuan.php
+    - app/Models/JenisUttp.php
+    - app/Models/WajibTeraPasar.php
+    - app/Models/UttpWajibTeraPasar.php
+models:
+    Kecamatan: { name: string }
+    Pasar: { name: string, latitude: double, longitude: double, relationships: { belongsTo: Kecamatan } }
+    Satuan: { name: string }
+    JenisUttp: { name: string }
+    WajibTeraPasar: { name: string, nik: 'string nullable', relationships: { belongsTo: Pasar } }
+    UttpWajibTeraPasar: { kap_max: 'double nullable', daya_baca: 'double nullable', merk: 'string nullable', tgl_uji: 'date nullable', expired: 'date nullable', status: 'string nullable', file: 'string nullable', relationships: { belongsTo: 'WajibTeraPasar, JenisUttp, Satuan' } }

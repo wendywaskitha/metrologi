@@ -1,0 +1,34 @@
+models :
+  Kecamatan :
+    name : string
+
+  Pasar :
+    name : string
+    latitude : double
+    longitude : double
+    relationships :
+      belongsTo : Kecamatan
+
+  Satuan :
+    name : string
+
+  JenisUttp :
+    name : string
+
+  WajibTeraPasar :
+    name : string
+    nik : string nullable
+    relationships :
+      belongsTo : Pasar
+
+  UttpWajibTeraPasar :
+    kap_max : double nullable
+    daya_baca : double nullable
+    merk : string nullable
+    tgl_uji : date nullable
+    expired : date nullable
+    status : string nullable
+    file : string nullable
+    relationships :
+      belongsTo : WajibTeraPasar, JenisUttp, Satuan
+
