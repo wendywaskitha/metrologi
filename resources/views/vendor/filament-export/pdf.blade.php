@@ -41,6 +41,17 @@
     </style>
 </head>
 <body>
+    <h1>Wajib Tera Pasar</h1>
+
+    @if ($filteredPasarName)
+        <h2>Filtered by Pasar: {{ $filteredPasarName }}</h2>
+    @else
+        <h2>All Data</h2>
+    @endif
+
+    @if ($noData)
+        <div class="no-data">No Data Available for the selected Pasar: {{ $filteredPasarName }}</div>
+    @else
     <table>
         <tr>
             @foreach ($columns as $column)
@@ -59,5 +70,6 @@
             </tr>
         @endforeach
     </table>
+    @endif
 </body>
 </html>

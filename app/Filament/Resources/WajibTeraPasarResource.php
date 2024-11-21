@@ -47,7 +47,12 @@ class WajibTeraPasarResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->label('Pemilik UTTP')
+                    ->description(fn($record)=>'NIK : '.$record->nik)
                     ->searchable(),
+                Tables\Columns\TextColumn::make('nik')
+                    ->label('NIK')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('pasar.name')
                     ->numeric()
                     ->sortable(),
