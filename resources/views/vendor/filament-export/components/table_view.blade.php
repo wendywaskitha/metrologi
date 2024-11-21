@@ -24,18 +24,18 @@
         triggerInputEvent('{{ $statePath }}', '{{ uniqid() }}');
         isOpen = true;
     });
-    
+
     $wire.$on('close-preview-modal-{{ $uniqueActionId }}', () => { isOpen = false; });
-    
+
     if (shouldRefresh) {
         $wire.dispatch('close-preview-modal-{{ $uniqueActionId }}');
-     
+
         triggerInputEvent('{{ $statePath }}', '{{ uniqid() }}');
-        
+
         $wire.dispatch('open-preview-modal-{{ $uniqueActionId }}');
     }
 
-    
+
     if (shouldPrint) {
         window.printHTML(`{!! $printContent !!}`, '{{ $statePath }}', '{{ $uniqueActionId }}');
     }
@@ -56,7 +56,8 @@
                 <tr class="dark:border-gray-700">
                     @foreach ($getAllColumns() as $column)
                         <td class="dark:border-gray-700">
-                            {{ $row[$column->getName()] }}
+                            {{-- Use strip_tags() to remove any HTML from the row data --}}
+                            {{ strip_tags($row[$column->getName()]) }}
                         </td>
                     @endforeach
                 </tr>

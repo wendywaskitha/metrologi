@@ -59,7 +59,8 @@
             <tr>
                 @foreach ($columns as $column)
                     <td>
-                        {{ $row[$column->getName()] }}
+                        {{-- Use strip_tags() to remove any HTML from the row data --}}
+                        {{ strip_tags($row[$column->getName()]) }}
                     </td>
                 @endforeach
             </tr>

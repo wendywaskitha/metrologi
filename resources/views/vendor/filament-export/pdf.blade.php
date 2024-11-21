@@ -12,8 +12,8 @@
             font-family: DejaVu Sans, sans-serif !important;
         }
 
-        html{
-            width:100%;
+        html {
+            width: 100%;
         }
 
         table {
@@ -25,12 +25,16 @@
 
         table td,
         th {
-            border-color: #ededed;
+            border-color: black;
+            /* Change border color to solid black */
             border-style: solid;
+            /* Ensure border is solid */
             border-width: 1px;
-            font-size: 14px;
+            font-size: 12px;
+            /* Set a smaller font size */
             overflow: hidden;
-            padding: 10px 5px;
+            padding: 5px;
+            /* Adjust padding for smaller font */
             word-break: normal;
         }
 
@@ -38,20 +42,15 @@
             font-weight: normal;
         }
 
+        .summary {
+            margin-top: 20px;
+            font-size: 10px;
+            /* Adjust font size for summary */
+        }
     </style>
 </head>
+
 <body>
-    <h1>Wajib Tera Pasar</h1>
-
-    @if ($filteredPasarName)
-        <h2>Filtered by Pasar: {{ $filteredPasarName }}</h2>
-    @else
-        <h2>All Data</h2>
-    @endif
-
-    @if ($noData)
-        <div class="no-data">No Data Available for the selected Pasar: {{ $filteredPasarName }}</div>
-    @else
     <table>
         <tr>
             @foreach ($columns as $column)
@@ -64,12 +63,26 @@
             <tr>
                 @foreach ($columns as $column)
                     <td>
-                        {{ $row[$column->getName()] }}
+                        {{-- Use strip_tags() to remove any HTML from the row data --}}
+                        {{ strip_tags($row[$column->getName()]) }}
                     </td>
                 @endforeach
             </tr>
         @endforeach
     </table>
-    @endif
+
+    {{-- Summary Section --}}
+    <div class="summary">
+        <h4>Total Per Jenis Uttp</h4>
+        <ul>
+            @foreach ($totalByJenisUttp as $jenisUttpName => $count)
+                <li>{{ $jenisUttpName }}: {{ $count }}</li>
+            @endforeach
+        </ul>
+
+        <h4>Total Semua Jenis Uttp</h4>
+        <p>Total: {{ $totalSemuaJenisUttp }}</p>
+    </div>
 </body>
+
 </html>
