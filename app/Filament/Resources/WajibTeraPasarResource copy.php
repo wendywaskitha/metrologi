@@ -105,7 +105,7 @@ class WajibTeraPasarResource extends Resource
                     ->defaultPageOrientation('landscape') // Set default page orientation
                     ->directDownload() // Download directly without showing modal
                     // ->withHiddenColumns() // Show hidden columns in the export
-                    ->modifyPdfWriter(fn ($writer) => $writer->setPaper('a4', 'potrait')) // Modify PDF writer settings
+                    ->modifyPdfWriter(fn ($writer) => $writer->setPaper('a4', 'landscape')) // Modify PDF writer settings
                     ->formatStates([
                         'name' => fn ($record) => strtoupper($record->name),
                         'nik' => fn ($record) => $record->nik ?? '-',
@@ -132,22 +132,18 @@ class WajibTeraPasarResource extends Resource
                                 default => '-'
                             };
 
-                            // [PERUBAHAN] Membuat array detail yang benar-benar terpisah
-                            return json_encode([
-                                'header' => $jenisUttp,
-                                'details' => [
-                                    'primary' => [
-                                        'Kap Maks' => sprintf('%s %s', $kapMax, $satuan),
-                                        'Daya Baca' => $dayaBaca
-                                    ],
-                                    'secondary' => [
-                                        'Tgl Uji' => $tglUji,
-                                        'Tgl Berlaku' => $expired,
-                                        'Status' => $statusDisplay
-                                    ]
-                                ]
-                            ]);
-                        })->implode("\n")
+                            // Combine all details
+                            return sprintf(
+                                "%s | Kap Maks: %s %s, Daya Baca: %s, Tgl Uji: %s, Expired: %s, Status: %s",
+                                $jenisUttp,
+                                $kapMax,
+                                $satuan,
+                                $dayaBaca,
+                                $tglUji,
+                                $expired,
+                                $statusDisplay
+                            );
+                        })->implode("\n") // Join multiple UTTP details with a newline
                     ]),
             ])
             ->actions([
