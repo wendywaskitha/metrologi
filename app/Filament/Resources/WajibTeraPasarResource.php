@@ -9,6 +9,7 @@ use Filament\Forms\Form;
 use Filament\Tables\Table;
 use App\Models\WajibTeraPasar;
 use Filament\Resources\Resource;
+use Filament\Tables\Actions\Action;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\WajibTeraPasarResource\Pages;
@@ -73,10 +74,17 @@ class WajibTeraPasarResource extends Resource
             ->filters([
                 //
             ])
+            ->headerActions([
+                Action::make('exportPDF')
+                    ->label('Export PDF')
+                    ->icon('heroicon-o-printer') // You can choose an appropriate icon
+                    ->url(route('wajib_tera_pasar.export_pdf')) // Ensure this route is defined
+                    ->color('primary'), // Optional: Change the color of the button
+            ])
             ->actions([
                 Tables\Actions\EditAction::make(),
             ])
-            
+
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
@@ -98,5 +106,19 @@ class WajibTeraPasarResource extends Resource
             'create' => Pages\CreateWajibTeraPasar::route('/create'),
             'edit' => Pages\EditWajibTeraPasar::route('/{record}/edit'),
         ];
+    }
+
+    public function exportPDF(PDF $pdf) // Use dependency injection for the PDF instance
+    {
+        // Fetch the data you want to include in the PDF
+        $wajibTeraPasars = WajibTeraPasar::with('pasar', 'uttpWajibTeraPasar.jenisUttp', 'uttpWajibTeraPasar.satuan')->get();
+
+        // Load the view into the PDF
+        $pdfInstance = $pdf->loadView('pdf.wajib_tera_pasar_pdf', [
+            'wajibTeraPasars' => $wajibTeraPasars,
+        ]);
+
+        // Return the PDF as a response
+        return $pdfInstance->download('wajib_tera_pasar.pdf');
     }
 }
