@@ -7,7 +7,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
-        "barryvdh/laravel-dompdf": "^3.0",
+        "alperenersoy/filament-export": "3.0.7",
         "dotswan/filament-map-picker": "^1.5",
         "filament/filament": "^3.2",
         "laravel/framework": "^11.31",

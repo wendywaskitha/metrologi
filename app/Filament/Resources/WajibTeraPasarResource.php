@@ -4,15 +4,17 @@ namespace App\Filament\Resources;
 
 use Filament\Forms;
 use Filament\Tables;
-use Barryvdh\DomPDF\PDF;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
+use Illuminate\Http\Request;
 use App\Models\WajibTeraPasar;
 use Filament\Resources\Resource;
 use Filament\Tables\Actions\Action;
+use Filament\Tables\Enums\FiltersLayout;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\WajibTeraPasarResource\Pages;
+use AlperenErsoy\FilamentExport\Actions\FilamentExportHeaderAction;
 use App\Filament\Resources\WajibTeraPasarResource\RelationManagers;
 use App\Filament\Resources\WajibTeraPasarResource\RelationManagers\JenisUttpRelationManager;
 use App\Filament\Resources\WajibTeraPasarResource\RelationManagers\UttpWajibTeraPasarRelationManager;
@@ -72,14 +74,13 @@ class WajibTeraPasarResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                // Add the pasar filter
+                Tables\Filters\SelectFilter::make('pasar_id')
+                    ->label('Pasar')
+                    ->relationship('pasar', 'name'), // Assuming 'pasar' is the relationship name and 'name' is the display column
             ])
             ->headerActions([
-                Action::make('exportPDF')
-                    ->label('Export PDF')
-                    ->icon('heroicon-o-printer') // You can choose an appropriate icon
-                    ->url(route('wajib_tera_pasar.export_pdf')) // Ensure this route is defined
-                    ->color('primary'), // Optional: Change the color of the button
+                FilamentExportHeaderAction::make('export')
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -106,19 +107,5 @@ class WajibTeraPasarResource extends Resource
             'create' => Pages\CreateWajibTeraPasar::route('/create'),
             'edit' => Pages\EditWajibTeraPasar::route('/{record}/edit'),
         ];
-    }
-
-    public function exportPDF(PDF $pdf) // Use dependency injection for the PDF instance
-    {
-        // Fetch the data you want to include in the PDF
-        $wajibTeraPasars = WajibTeraPasar::with('pasar', 'uttpWajibTeraPasar.jenisUttp', 'uttpWajibTeraPasar.satuan')->get();
-
-        // Load the view into the PDF
-        $pdfInstance = $pdf->loadView('pdf.wajib_tera_pasar_pdf', [
-            'wajibTeraPasars' => $wajibTeraPasars,
-        ]);
-
-        // Return the PDF as a response
-        return $pdfInstance->download('wajib_tera_pasar.pdf');
     }
 }
