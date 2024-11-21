@@ -1,90 +1,88 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wajib Tera Pasar PDF</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>{{ $fileName }}</title>
+    <style type="text/css" media="all">
+        * {
+            font-family: DejaVu Sans, sans-serif !important;
         }
-        h1 {
-            text-align: center;
-            margin-bottom: 20px;
+
+        html {
+            width: 100%;
         }
+
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 20px;
+            border-spacing: 0;
+            border-radius: 10px 10px 10px 10px;
         }
-        th, td {
-            border: 1px solid #000;
-            padding: 8px;
-            text-align: left;
-        }
+
+        table td,
         th {
-            background-color: #f2f2f2;
+            border-color: black;
+            /* Change border color to solid black */
+            border-style: solid;
+            /* Ensure border is solid */
+            border-width: 1px;
+            font-size: 12px;
+            /* Set a smaller font size */
+            overflow: hidden;
+            padding: 5px;
+            /* Adjust padding for smaller font */
+            word-break: normal;
         }
-        ul {
-            margin: 0;
-            padding: 0;
-            list-style-type: none;
+
+        table th {
+            font-weight: normal;
         }
-        li {
-            margin-bottom: 5px;
-        }
-        .no-data {
-            text-align: center;
-            font-size: 18px;
-            color: red;
+
+        .summary {
             margin-top: 20px;
+            font-size: 10px;
+            /* Adjust font size for summary */
         }
     </style>
 </head>
+
 <body>
-    <h1>Wajib Tera Pasar</h1>
-
-    @if ($filteredPasarName)
-        <h2>Filtered by Pasar: {{ $filteredPasarName }}</h2>
-    @else
-        <h2>All Data</h2>
-    @endif
-
-    @if ($noData)
-        <div class="no-data">No Data Available for the selected Pasar: {{ $filteredPasarName }}</div>
-    @else
-        <table>
-            <thead>
-                <tr>
-                    <th>Pemilik UTTP</th>
-                    <th>NIK</th>
-                    <th>Pasar</th>
-                    <th>UTTP Details</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($wajibTeraPasars as $item)
-                    <tr>
-                        <td>{{ $item->name }}</td>
-                        <td>{{ $item->nik }}</td>
-                        <td>{{ $item->pasar->name }}</td>
-                        <td>
-                            <ul>
-                                @foreach ($item->uttpWajibTeraPasar as $uttp)
-                                    <li>
-                                        {{ $uttp->jenisUttp->name }} |
-                                        Kap Maks: {{ number_format($uttp->kap_max, 0, '.', '.') }} {{ $uttp->satuan->name }},
-                                        Daya Baca: {{ $uttp->daya_baca }}
-                                    </li>
-                                @endforeach
-                            </ul>
-                        </td>
-                    </tr>
+    <table>
+        <tr>
+            @foreach ($columns as $column)
+                <th>
+                    {{ $column->getLabel() }}
+                </th>
+            @endforeach
+        </tr>
+        @foreach ($rows as $row)
+            <tr>
+                @foreach ($columns as $column)
+                    <td>
+                        {{-- Use strip_tags() to remove any HTML from the row data --}}
+                        {{ strip_tags($row[$column->getName()]) }}
+                    </td>
                 @endforeach
-            </tbody>
-        </table>
-    @endif
+            </tr>
+        @endforeach
+    </table>
+
+    {{-- Summary Section --}}
+    <div class="summary">
+        <h4>Total Per Jenis Uttp</h4>
+        <ul>
+            @foreach ($totalByJenisUttp as $jenisUttpName => $count)
+                <li>{{ $jenisUttpName }}: {{ $count }}</li>
+            @endforeach
+        </ul>
+
+        <h4>Total Semua Jenis Uttp</h4>
+        <p>Total: {{ $totalSemuaJenisUttp }}</p>
+    </div>
 </body>
+
 </html>

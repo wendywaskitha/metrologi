@@ -98,6 +98,7 @@ class WajibTeraPasarResource extends Resource
                                 return $group->count(); // Count the number of records in each group
                             }),
                         'totalSemuaJenisUttp' => UttpWajibTeraPasar::whereIn('wajib_tera_pasar_id', $action->getRecords()->pluck('id'))->count(), // Total count of all UttpWajibTeraPasar
+                        'pasarName' => $action->getRecords()->first()->pasar->name ?? 'Unknown Pasar', // Get the Pasar name from the first record
                     ])
                     ->fileName('Wajib Tera Pasar Export') // Default file name
                     ->defaultFormat('pdf') // Set default format to PDF

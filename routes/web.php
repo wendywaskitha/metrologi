@@ -7,5 +7,9 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-// Add this route to your routes file
-Route::get('/wajib-tera-pasar/export-pdf', [WajibTeraPasarResource::class, 'exportPDF'])->name('wajib_tera_pasar.export_pdf');
+// Filament automatically handles resource routes, including export actions.
+// If you have custom routes for export, add them here.
+
+// Example of adding a custom export route (if needed)
+// This is usually not necessary as the export action is handled by the resource.
+Route::get('/wajib-tera-pasar/export', [WajibTeraPasarResource::class, 'exportPDF'])->name('wajib_tera_pasar.export_pdf');

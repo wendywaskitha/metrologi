@@ -51,6 +51,7 @@
 </head>
 
 <body>
+    <h4>Pasar : {{ $pasarName }}</h4>
     <table>
         <tr>
             @foreach ($columns as $column)
