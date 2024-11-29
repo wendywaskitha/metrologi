@@ -46,14 +46,24 @@ class UttpWajibTeraPasar extends Model
         'satuan_id' => 'integer',
     ];
 
-    public function wajibTeraPasar(): BelongsTo
+    // public function wajibTeraPasar(): BelongsTo
+    // {
+    //     return $this->belongsTo(WajibTeraPasar::class);
+    // }
+
+    // public function jenisUttp(): BelongsTo
+    // {
+    //     return $this->belongsTo(JenisUttp::class);
+    // }
+
+    public function jenisUttp()
     {
-        return $this->belongsTo(WajibTeraPasar::class);
+        return $this->belongsTo(JenisUttp::class, 'jenis_uttp_id');
     }
 
-    public function jenisUttp(): BelongsTo
+    public function wajibTeraPasar()
     {
-        return $this->belongsTo(JenisUttp::class);
+        return $this->belongsTo(WajibTeraPasar::class, 'wajib_tera_pasar_id');
     }
 
     public function satuan(): BelongsTo
@@ -111,6 +121,21 @@ class UttpWajibTeraPasar extends Model
         } else {
             $this->createHistoryEntry();
         }
+    }
+
+    // Scope untuk filter UTTP yang akan expire
+    public function scopeNearExpiration($query, $days = 30)
+    {
+        return $query->where('status', 'sah')
+            ->where('expired', '<=', now()->addDays($days))
+            ->where('expired', '>', now());
+    }
+
+    // Scope untuk filter UTTP yang sudah expire
+    public function scopeExpired($query)
+    {
+        return $query->where('status', 'sah')
+            ->where('expired', '<=', now());
     }
 
 }

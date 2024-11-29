@@ -2,65 +2,68 @@
 
 namespace App\Services;
 
-use Carbon\Carbon;
 use App\Models\UttpWajibTeraPasar;
-use App\Models\UttpExpirationNotification;
+use App\Models\User;
+use App\Notifications\UttpExpirationNotification;
+use Illuminate\Support\Facades\Log;
 
 class UttpExpirationNotificationService
 {
     public function checkAndCreateExpirationNotifications()
     {
-        $expiringItems = UttpWajibTeraPasar::with(['wajibTeraPasar', 'jenisUttp'])
-            ->where('status', 'sah')
-            ->get()
-            ->filter(function ($uttp) {
-                $expiredDate = Carbon::parse($uttp->expired);
-                $now = Carbon::now();
+        try {
+            // Ambil semua super admin
+            $superAdmins = User::role('super_admin')->get();
 
-                return $expiredDate->lessThanOrEqualTo($now) ||
-                       $expiredDate->diffInDays($now) <= 30;
-            });
+            // Query untuk UTTP yang akan expire dalam 30 hari
+            $warningUttp = $this->getWarningUttp();
 
-        $notificationCount = 0;
-        foreach ($expiringItems as $uttp) {
-            if ($this->createExpirationNotification($uttp)) {
-                $notificationCount++;
+            // Query untuk UTTP yang sudah expire
+            $expiredUttp = $this->getExpiredUttp();
+
+            $notificationCount = 0;
+
+            // Kirim notifikasi warning
+            if ($warningUttp->isNotEmpty()) {
+                $superAdmins->each(function($admin) use ($warningUttp) {
+                    $admin->notify(new UttpExpirationNotification($warningUttp, 'warning'));
+                });
+                $notificationCount += $warningUttp->count();
             }
-        }
 
-        return $notificationCount;
+            // Kirim notifikasi expired
+            if ($expiredUttp->isNotEmpty()) {
+                $superAdmins->each(function($admin) use ($expiredUttp) {
+                    $admin->notify(new UttpExpirationNotification($expiredUttp, 'expired'));
+                });
+                $notificationCount += $expiredUttp->count();
+            }
+
+            Log::info("UTTP Expiration Check: Created {$notificationCount} notifications");
+
+            return $notificationCount;
+        } catch (\Exception $e) {
+            Log::error('UTTP Expiration Check Failed: ' . $e->getMessage(), [
+                'trace' => $e->getTraceAsString()
+            ]);
+            throw $e;
+        }
     }
 
-    protected function createExpirationNotification($uttp)
+    protected function getWarningUttp()
     {
-        $expiredDate = Carbon::parse($uttp->expired);
-        $now = Carbon::now();
+        return UttpWajibTeraPasar::where('status', 'sah')
+            ->whereDate('expired', '<=', now()->addDays(30))
+            ->whereDate('expired', '>', now())
+            ->with(['jenisUttp', 'wajibTeraPasar'])
+            ->get();
+    }
 
-        $type = $expiredDate->lessThanOrEqualTo($now) ? 'expired' : 'near_expiration';
-
-        $message = $type === 'expired'
-            ? "UTTP masa berlaku habis: {$uttp->jenisUttp->name} milik {$uttp->wajibTeraPasar->name}"
-            : "UTTP akan habis masa berlaku dalam {$expiredDate->diffInDays($now)} hari: {$uttp->jenisUttp->name} milik {$uttp->wajibTeraPasar->name}";
-
-        // Cek notifikasi duplikat
-        $existingNotification = UttpExpirationNotification::where([
-            'uttp_id' => $uttp->id,
-            'type' => $type,
-            'is_read' => false
-        ])->first();
-
-        if (!$existingNotification) {
-            UttpExpirationNotification::create([
-                'uttp_id' => $uttp->id,
-                'wajib_tera_pasar_id' => $uttp->wajib_tera_pasar_id,
-                'type' => $type,
-                'message' => $message,
-                'is_read' => false
-            ]);
-
-            return true;
-        }
-
-        return false;
+    protected function getExpiredUttp()
+    {
+        return UttpWajibTeraPasar::where('status', 'sah')
+            ->whereDate('expired', '<=', now())
+            ->with(['jenisUttp', 'wajibTeraPasar'])
+            ->get();
     }
 }

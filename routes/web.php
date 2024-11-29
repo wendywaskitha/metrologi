@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Filament\Resources\WajibTeraPasarResource;
+use App\Filament\Resources\UttpNotificationResource;
 
 Route::get('/', function () {
     return view('welcome');

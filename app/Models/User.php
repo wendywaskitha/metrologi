@@ -46,4 +46,17 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function routeNotificationForFilament()
+    {
+        return $this;
+    }
+
+    // Tambahkan method helper untuk membaca notifikasi
+    public function markUttpNotificationsAsRead()
+    {
+        $this->unreadNotifications()
+            ->where('type', 'App\Notifications\UttpExpirationNotification')
+            ->update(['read_at' => now()]);
+    }
 }

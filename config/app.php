@@ -17,6 +17,14 @@ return [
 
     'company_name' => env('COMPANY_NAME', 'UPTD Metrologi Legal Kab. Muna Barat'),
 
+    'notification_expiration_days' => env('NOTIFICATION_EXPIRATION_DAYS', 30),
+
+    'notifications' => [
+    'database' => [
+        'model' => \App\Models\DatabaseNotification::class,
+    ],
+],
+
     /*
     |--------------------------------------------------------------------------
     | Application Environment
