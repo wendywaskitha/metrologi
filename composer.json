@@ -8,6 +8,7 @@
     "require": {
         "php": "^8.2",
         "alperenersoy/filament-export": "3.0.7",
+        "bezhansalleh/filament-shield": "^3.3",
         "dotswan/filament-map-picker": "^1.5",
         "filament/filament": "^3.2",
         "laravel/framework": "^11.31",

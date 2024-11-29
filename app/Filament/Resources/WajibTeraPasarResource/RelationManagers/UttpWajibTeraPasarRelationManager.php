@@ -59,9 +59,31 @@ class UttpWajibTeraPasarRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('satuan.name'),
                 Tables\Columns\TextColumn::make('daya_baca'),
                 Tables\Columns\TextColumn::make('merk'),
-                Tables\Columns\TextColumn::make('tgl_uji'),
-                Tables\Columns\TextColumn::make('expired'),
-                Tables\Columns\TextColumn::make('status'),
+                Tables\Columns\TextColumn::make('tgl_uji')->date('d-m-Y'),
+                Tables\Columns\TextColumn::make('expired')
+                    ->label('Tanggal Berlaku')
+                    ->formatStateUsing(function ($record) {
+                        $expiredDate = \Carbon\Carbon::parse($record->expired);
+                        $now = \Carbon\Carbon::now();
+                        $nextYear = $now->copy()->addYear();
+                        $oneMonthBeforeNextYear = $nextYear->copy()->subMonth();
+
+                        // Determine the color based on the expiration date
+                        if ($expiredDate->isToday()) {
+                            return '<span style="color: red;">' . $expiredDate->format('d-m-Y') . '</span>';
+                        } elseif ($expiredDate->between($oneMonthBeforeNextYear, $nextYear)) {
+                            // If the expired date is within 1 month of next year
+                            return '<span style="color: orange;">' . $expiredDate->format('d-m-Y') . '</span>';
+                        }
+
+                        return $expiredDate->format('d-m-Y'); // Default format
+                    })
+                    ->html(), // Enable HTML rendering
+                Tables\Columns\BadgeColumn::make('status')
+                    ->colors([
+                        'success' => 'sah',
+                        'warning' => 'batal',
+                    ]),
             ])
             ->filters([
                 //

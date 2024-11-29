@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\JenisUttp;
+use App\Models\UttpHistory;
 use App\Models\UttpWajibTeraPasar;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -47,5 +48,10 @@ class WajibTeraPasar extends Model
     public function jenisUttp() : BelongsTo
     {
         return $this->belongsTo(JenisUttp::class);
+    }
+
+    public function uttpHistories()
+    {
+        return $this->hasMany(UttpHistory::class);
     }
 }

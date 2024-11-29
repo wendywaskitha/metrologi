@@ -2,9 +2,11 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\UttpHistory;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class UttpWajibTeraPasar extends Model
 {
@@ -57,6 +59,58 @@ class UttpWajibTeraPasar extends Model
     public function satuan(): BelongsTo
     {
         return $this->belongsTo(Satuan::class);
+    }
+
+    public function histories()
+    {
+        return $this->hasMany(UttpHistory::class, 'uttp_wajib_tera_pasar_id');
+    }
+
+    protected static function booted()
+    {
+        static::created(function ($uttp) {
+            $uttp->createHistoryEntry();
+        });
+
+        static::updated(function ($uttp) {
+            $uttp->updateHistoryEntry();
+        });
+    }
+
+    public function createHistoryEntry()
+    {
+        UttpHistory::create([
+            'wajib_tera_pasar_id' => $this->wajib_tera_pasar_id,
+            'jenis_uttp_id' => $this->jenis_uttp_id,
+            'uttp_wajib_tera_pasar_id' => $this->id,
+            'tgl_uji' => $this->tgl_uji,
+            'expired' => $this->expired,
+            'status' => $this->status,
+            'merk' => $this->merk,
+            'kap_max' => $this->kap_max,
+            'satuan_id' => $this->satuan_id,
+            'created_by' => Auth::user()->id ?? null,
+        ]);
+    }
+
+    public function updateHistoryEntry()
+    {
+        $existingHistory = UttpHistory::where([
+            'uttp_wajib_tera_pasar_id' => $this->id
+        ])->first();
+
+        if ($existingHistory) {
+            $existingHistory->update([
+                'tgl_uji' => $this->tgl_uji,
+                'expired' => $this->expired,
+                'status' => $this->status,
+                'merk' => $this->merk,
+                'kap_max' => $this->kap_max,
+                'satuan_id' => $this->satuan_id,
+            ]);
+        } else {
+            $this->createHistoryEntry();
+        }
     }
 
 }

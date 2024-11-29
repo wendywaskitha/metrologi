@@ -18,6 +18,7 @@ use App\Filament\Resources\WajibTeraPasarResource\Pages;
 use AlperenErsoy\FilamentExport\Actions\FilamentExportHeaderAction;
 use App\Filament\Resources\WajibTeraPasarResource\RelationManagers;
 use App\Filament\Resources\WajibTeraPasarResource\RelationManagers\JenisUttpRelationManager;
+use App\Filament\Resources\WajibTeraPasarResource\RelationManagers\UttpHistoriesRelationManager;
 use App\Filament\Resources\WajibTeraPasarResource\RelationManagers\UttpWajibTeraPasarRelationManager;
 
 class WajibTeraPasarResource extends Resource
@@ -165,6 +166,7 @@ class WajibTeraPasarResource extends Resource
     {
         return [
             UttpWajibTeraPasarRelationManager::class,
+            UttpHistoriesRelationManager::class,
         ];
     }
 
