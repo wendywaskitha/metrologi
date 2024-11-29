@@ -14,6 +14,8 @@ class UttpHistoriesRelationManager extends RelationManager
 {
     protected static string $relationship = 'uttpHistories';
 
+    protected static ?string $title = 'Riwayat Tera Ulang UTTP';
+
     // public function form(Form $form): Form
     // {
     //     return $form

@@ -14,6 +14,8 @@ class UttpWajibTeraPasarRelationManager extends RelationManager
 {
     protected static string $relationship = 'uttpWajibTeraPasar';
 
+    protected static ?string $title = 'UTTP';
+
     public function form(Form $form): Form
     {
         return $form
