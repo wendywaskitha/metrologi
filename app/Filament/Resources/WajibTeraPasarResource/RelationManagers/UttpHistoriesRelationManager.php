@@ -66,12 +66,12 @@ class UttpHistoriesRelationManager extends RelationManager
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
-                Tables\Actions\ViewAction::make()
-                    ->modalContent(function($record) {
-                        return view('filament.resources.wajib-tera-pasar.history-details', [
-                            'record' => $record
-                        ]);
-                    }),
+                // Tables\Actions\ViewAction::make()
+                //     ->modalContent(function($record) {
+                //         return view('filament.resources.wajib-tera-pasar.history-details', [
+                //             'record' => $record
+                //         ]);
+                //     }),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -82,5 +82,5 @@ class UttpHistoriesRelationManager extends RelationManager
             ->paginated([10, 25, 50]);
     }
 
-    
+
 }
